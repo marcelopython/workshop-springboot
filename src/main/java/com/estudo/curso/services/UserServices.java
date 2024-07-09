@@ -13,6 +13,8 @@ import com.estudo.curso.repositories.UserRepository;
 import com.estudo.curso.services.exceptions.DatabaseException;
 import com.estudo.curso.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 // Register injection
 @Service
 public class UserServices {
@@ -46,12 +48,20 @@ public class UserServices {
 	}
 	
 	public User update(Long id, User user) {
-		// prepara o objeto monitorado para depois dazer alguma operação no banco de dados 
-		User entity = repository.getReferenceById(id);
 		
-		updateData(entity, user);
+		try {
+
+			// prepara o objeto monitorado para depois dazer alguma operação no banco de dados 
+			User entity = repository.getReferenceById(id);
+			
+			updateData(entity, user);
+			
+			return repository.save(entity);
+		}catch(EntityNotFoundException e) {
 		
-		return repository.save(entity);
+			throw new ResourceNotFoundException(id);
+		}
+		
 		
 	}
 
