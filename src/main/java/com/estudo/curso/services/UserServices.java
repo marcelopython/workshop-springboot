@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.estudo.curso.entities.User;
 
 import com.estudo.curso.repositories.UserRepository;
+import com.estudo.curso.services.exceptions.ResourceNotFoundException;
 
 // Register injection
 @Service
@@ -25,7 +26,7 @@ public class UserServices {
 	
 	public User findById(Long id) {
 		Optional<User> user = repository.findById(id);
-		return user.get();
+		return user.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public User insert(User user) {
