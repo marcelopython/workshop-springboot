@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.estudo.curso.entities.User;
 
 import com.estudo.curso.repositories.UserRepository;
+import com.estudo.curso.services.exceptions.DatabaseException;
 import com.estudo.curso.services.exceptions.ResourceNotFoundException;
 
 // Register injection
@@ -34,7 +35,14 @@ public class UserServices {
 	}
 	
 	public void delete(Long id) {
-		repository.deleteById(id);
+		
+		try {
+			repository.deleteById(id);
+			
+		} catch(DataIntegrityViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		
 	}
 	
 	public User update(Long id, User user) {
